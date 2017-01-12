@@ -1,0 +1,16 @@
+- title: Intro
+  link: '/'
+
+- title: Brand
+  pages:
+    - title: Color
+      link: '/omgcolors'
+    - title: Illustration
+    - title: Typography
+      pages:
+        - title: Headings
+        - title: Copy
+
+- title: Icons
+  pages:
+    - title: Scouticons
