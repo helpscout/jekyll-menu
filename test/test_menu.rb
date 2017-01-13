@@ -10,9 +10,8 @@ class TestTemplate < JekyllUnitTest
     end
 
     should "generator: initializes correctly" do
-      puts @site.data["site_menu"][0]["items"]
-      # exit
       post = @site.posts.docs[0]
+      puts post
       expected = <<EXPECTED
 hello
 EXPECTED

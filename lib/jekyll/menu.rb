@@ -2,92 +2,115 @@ require "jekyll"
 
 module Jekyll
   module Menu
-    class Generator < Jekyll::Generator
+    @site = false
+    @data = {}
+    @options = {
+      "url_path" => "/",
+      "class" => "c-menu",
+      "item_class" => "c-menu__item",
+      "item_active_class" => "is-active",
+    }
 
-      def initialize(config = {})
-        @site = false
-        @options = {
-          "url_path" => "/",
-          "class" => "c-menu",
-          "item_class" => "c-menu__item"
-        }
-      end
-
-      def generate(site)
-        @site = site
-        @site.data["site_menu"] = []
-        if @site.data.key?("menus")
-          if @site.data["menus"].length
-            setup_menus()
-          end
+    def self.initialize(data)
+      @data = data ? data : {}
+      @site.data["site_menu"] = []
+      if @site.data.key?("menus")
+        if @site.data["menus"].length
+          self.setup_menus()
         end
       end
+    end
 
-      def setup_menus
-        menus = @site.data["menus"]
-        @site.data["site_menu"] = menus.map { |m|
-          title = m[0]
-          items = m[1]
-          menu = {
-            "title" => title
-          }
-
-          setup_menu(menu, title, items)
+    def self.setup_menus
+      menus = @site.data["menus"]
+      menus = menus.map { |m|
+        title = m[0]
+        items = m[1]
+        menu = {
+          title => self.setup_menu(items, title)["items"]
         }
-      end
+      }
+      @site.data["site_menu"] = Hash[*menus.flatten]
+    end
 
-      def setup_menu(menu, title, items)
-        new_menu = {}
-        if title
-          new_menu["title"] = title
-        end
-        path = menu_path(title)
-        new_menu["path"] = path
-        new_menu["class"] = @options["class"]
-        new_menu["link"] = "#"
-        new_menu["items"] = setup_menu_items(items, path)
-        new_menu
+    def self.setup_menu(items, title)
+      new_menu = {}
+      if title
+        new_menu["title"] = title
       end
+      path = menu_path(title)
+      new_menu["path"] = path
+      new_menu["class"] = @options["class"]
+      new_menu["link"] = "#"
+      new_menu["items"] = self.setup_menu_items(items, path)
+      new_menu
+    end
 
-      def setup_menu_items(items, path)
-        path = path ? path : @options["url_path"]
-        items.map { |i|
-          if i.key?("pages")
-            item = setup_menu(item, i["title"], i["pages"])
-          else
-            item = {}
-            item["class"] = @options["item_class"]
-            item["title"] = i["title"]
-            item["link"] = item_link(i, path)
-          end
-          item
-        }
-      end
-
-      def slugify(path)
-        path.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
-      end
-
-      def menu_path(title)
-        path = @options["url_path"]
-        title = slugify(title)
-        "#{path}#{title}"
-      end
-
-      def item_link(item, path)
-        if item.key?("link")
-          item["link"]
+    def self.setup_menu_items(items, path)
+      path = path ? path : @options["url_path"]
+      items.map { |i|
+        if i.key?("pages")
+          item = self.setup_menu(i["pages"], i["title"])
         else
-          unless path === "/"
-            title = item["title"]
-            link = slugify(title)
-            "#{path}/#{link}"
-          else
-            path
-          end
+          item = {}
+          item["class"] = self.item_class(path)
+          item["title"] = i["title"]
+          item["link"] = self.item_link(i, path)
+        end
+        item
+      }
+    end
+
+    def self.liquify(input)
+        output = Liquid::Template.parse(input)
+        output.render(@data)
+    end
+
+    def self.slugify(path)
+      path.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+    end
+
+    def self.menu_path(title)
+      path = @options["url_path"]
+      title = self.slugify(title)
+      "#{path}#{title}"
+    end
+
+    def self.item_link(item, path)
+      if item.key?("link")
+        item["link"]
+      else
+        unless path === "/"
+          title = item["title"]
+          link = self.slugify(title)
+          "#{path}/#{link}"
+        else
+          path
         end
       end
+    end
 
+    def self.item_class(path)
+      class_name = @options["item_class"]
+      if @data.url === path
+        class_name = "#{class_name} #{@options['item_active_class']}"
+      end
+      class_name
+    end
+
+    # Sets the Site class for jekyll-menu
+    Jekyll::Hooks.register :site, :pre_render do |site|
+      @site = site
+    end
+
+    # Generates and evaluates data for posts
+    Jekyll::Hooks.register :posts, :pre_render do |post|
+      self.initialize(post)
+    end
+
+    # Generates and evaluates data for pages
+    Jekyll::Hooks.register :pages, :pre_render do |pages|
+      self.initialize(page)
     end
   end
 end
