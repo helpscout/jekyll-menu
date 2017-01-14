@@ -9,11 +9,12 @@ class TestTemplate < JekyllUnitTest
       @site.render
     end
 
-    should "do something" do
-      expected = true
-      actual = true
+    should "page: active item class is added to current page" do
+      page = @site.pages[0]
+      menu = @site.data["site_menu"]["test"]
+      item = menu[1]
 
-      assert_equal(expected, actual)
+      assert_equal(true, item["active"])
     end
 
   end

@@ -22,15 +22,13 @@ module Jekyll
     end
 
     def self.setup_menus
-      menus = @site.data["menus"]
-      menus = menus.map { |m|
+      menus = @site.data["menus"].map { |m|
         title = m[0]
         items = m[1]
-        menu = {
-          title => self.setup_menu(items, title)["items"]
-        }
+        m[1] = self.setup_menu(items, title)["items"]
+        m
       }
-      @site.data["site_menu"] = Hash[*menus.flatten]
+      @site.data["site_menu"] = Hash[*menus.flatten(1)]
     end
 
     def self.setup_menu(items, title)
@@ -53,9 +51,10 @@ module Jekyll
           item = self.setup_menu(i["pages"], i["title"])
         else
           item = {}
-          item["class"] = self.item_class(path)
           item["title"] = i["title"]
           item["link"] = self.item_link(i, path)
+          item["class"] = self.item_class(item["link"])
+          item["active"] = self.item_is_active(item["link"])
         end
         item
       }
@@ -90,9 +89,16 @@ module Jekyll
       end
     end
 
+    def self.item_is_active(path)
+      unless path === "/"
+        path = path.gsub(/\/$/, "")
+      end
+      @data.url === path
+    end
+
     def self.item_class(path)
       class_name = @options["item_class"]
-      if @data.url === path
+      if self.item_is_active(path)
         class_name = "#{class_name} #{@options['item_active_class']}"
       end
       class_name
@@ -109,7 +115,7 @@ module Jekyll
     end
 
     # Generates and evaluates data for pages
-    Jekyll::Hooks.register :pages, :pre_render do |pages|
+    Jekyll::Hooks.register :pages, :pre_render do |page|
       self.initialize(page)
     end
   end
