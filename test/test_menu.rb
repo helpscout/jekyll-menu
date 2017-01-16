@@ -20,7 +20,7 @@ class TestTemplate < JekyllUnitTest
     end
 
     should "class: an active item has the correct menu class" do
-      page = @site.pages[0]
+      page = @site.pages[1]
       menu = page["menu"]["test-page"]
       item = menu[1]
 
@@ -57,12 +57,32 @@ class TestTemplate < JekyllUnitTest
       assert(item["items"], true)
     end
 
-    should "sub-menu: a sub-menu has the correct class name" do
+    should "sub-menu: has # a link url" do
       page = @site.pages[0]
       menu = page["menu"]["test-page"]
       item = menu[3]
 
-      class_name = "c-menu"
+      url = "#"
+
+      assert_equal(url, item["link"])
+    end
+
+    should "sub-menu: a sub-menu has the correct class name" do
+      page = @site.pages[0]
+      menu = page["menu"]["test-page"]
+      item = menu[4]
+
+      class_name = "c-menu c-menu--sub-menu"
+
+      assert_equal(class_name, item["class"])
+    end
+
+    should "sub-menu: an active sub-menu has the correct class name" do
+      page = @site.pages[0]
+      menu = page["menu"]["test-page"]
+      item = menu[3]
+
+      class_name = "c-menu c-menu--sub-menu is-active"
 
       assert_equal(class_name, item["class"])
     end

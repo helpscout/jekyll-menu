@@ -6,7 +6,9 @@ module Jekyll
     @data = {}
     @options = {
       "url_path" => "/",
-      "class" => "c-menu",
+      "menu_class" => "c-menu",
+      "menu_sub_class" => "c-menu--sub-menu",
+      "menu_active_class" => "is-active",
       "item_class" => "c-menu__item",
       "item_active_class" => "is-active",
     }
@@ -30,16 +32,16 @@ module Jekyll
       @data.data["menu"] = Hash[*menus.flatten(1)]
     end
 
-    def self.setup_menu(items, title)
+    def self.setup_menu(items, title, sub = true)
       new_menu = {}
       if title
         new_menu["title"] = title
       end
       path = menu_path(title)
       new_menu["path"] = path
-      new_menu["class"] = @options["class"]
-      new_menu["link"] = "#"
       new_menu["items"] = self.setup_menu_items(items, path)
+      new_menu["link"] = "#"
+      new_menu["class"] = self.menu_class(sub, new_menu["items"])
       new_menu
     end
 
@@ -47,7 +49,7 @@ module Jekyll
       path = path ? path : @options["url_path"]
       items.map { |i|
         if i.key?("pages")
-          item = self.setup_menu(i["pages"], i["title"])
+          item = self.setup_menu(i["pages"], i["title"], true)
         else
           item = {}
           item["title"] = i["title"]
@@ -74,6 +76,32 @@ module Jekyll
       "#{path}#{title}"
     end
 
+    def self.menu_class(sub = false, items = [])
+      class_name = @options["menu_class"]
+      if sub
+        class_name = "#{class_name} #{@options['menu_sub_class']}"
+      end
+      if self.menu_has_active_item(items)
+        class_name = "#{class_name} #{@options['menu_active_class']}"
+      end
+      class_name
+    end
+
+    def self.menu_has_active_item(items = [], has_active = false)
+      unless has_active
+        items.each do |item|
+          if item["items"]
+            self.menu_has_active_item(item["items"], has_active)
+          end
+          if item["active"]
+            has_active = true
+            break
+          end
+        end
+      end
+      has_active
+    end
+
     def self.item_link(item, path)
       if item.key?("link")
         item["link"]
@@ -89,10 +117,14 @@ module Jekyll
     end
 
     def self.item_is_active(path)
+      url = @data.url
       unless path === "/"
         path = path.gsub(/\/$/, "")
       end
-      @data.url === path
+      unless url === "/"
+        url = url.gsub(/\/$/, "")
+      end
+      url === path
     end
 
     def self.item_class(path)
