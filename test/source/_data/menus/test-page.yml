@@ -1,0 +1,10 @@
+- title: Home
+  link: '/'
+- title: Test
+  link: '/test/'
+- title: Custom
+  link: 'https://www.helpscout.net/'
+- title: Super
+  pages:
+    - title: Salad
+    - title: Soup

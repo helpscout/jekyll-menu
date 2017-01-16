@@ -9,9 +9,9 @@ class TestTemplate < JekyllUnitTest
       @site.render
     end
 
-    should "page: active item class is added to current page" do
-      page = @site.pages[0]
-      menu = page["menu"]["test-page"]
+    should "post: active item class is added to current post" do
+      post = @site.posts[0]
+      menu = post["menu"]["test-post"]
       item = menu[1]
 
       assert_equal(true, item["active"])

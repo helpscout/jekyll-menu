@@ -13,7 +13,6 @@ module Jekyll
 
     def self.initialize(data)
       @data = data ? data : {}
-      @site.data["site_menu"] = []
       if @site.data.key?("menus")
         if @site.data["menus"].length
           self.setup_menus()
@@ -28,7 +27,7 @@ module Jekyll
         m[1] = self.setup_menu(items, title)["items"]
         m
       }
-      @site.data["site_menu"] = Hash[*menus.flatten(1)]
+      @data.data["menu"] = Hash[*menus.flatten(1)]
     end
 
     def self.setup_menu(items, title)

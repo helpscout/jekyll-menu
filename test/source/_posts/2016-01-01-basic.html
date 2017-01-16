@@ -1,8 +1,8 @@
 ---
 title: hello
+permalink: '2016/01/01/basic'
 ---
-<ul>
-{% for item in site.data.site_menu.nav %}
-  {{ item.class }}
+
+{% for item in page.menu.nav %}
+  {{ item }}
 {% endfor %}
-</ul>
