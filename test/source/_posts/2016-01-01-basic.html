@@ -3,6 +3,10 @@ title: hello
 permalink: '2016/01/01/basic'
 ---
 
-{% for item in page.menu.nav %}
-  {{ item }}
+<ul class="c-menu">
+{% for item in page.menu.test-post %}
+  <li class="{{ item.class }}">
+    <a href="{{ item.link }}">{{ item.title }}</a>
+  </li>
 {% endfor %}
+</ul>
