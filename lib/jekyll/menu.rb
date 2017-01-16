@@ -141,13 +141,15 @@ module Jekyll
     end
 
     # Generates and evaluates data for posts
-    Jekyll::Hooks.register :posts, :pre_render do |post|
+    Jekyll::Hooks.register :posts, :pre_render do |post, payload|
       self.initialize(post)
+      payload["page"]["menu"] = @data["menu"]
     end
 
     # Generates and evaluates data for pages
-    Jekyll::Hooks.register :pages, :pre_render do |page|
+    Jekyll::Hooks.register :pages, :pre_render do |page, payload|
       self.initialize(page)
+      payload["page"]["menu"] = @data["menu"]
     end
   end
 end
