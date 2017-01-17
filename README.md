@@ -13,6 +13,8 @@ Easy menu creation with YAML data
 - title: Home
   link: "/"
 - title: Blog
+- title: Seed
+  link: "http://developer.helpscout.net/seed/"
 - title: Contact
 ```
 
@@ -36,6 +38,9 @@ Easy menu creation with YAML data
   </li>
   <li class="c-menu__item">
     <a href="/blog" class="c-menu__link">Blog</a>
+  </li>
+  <li class="c-menu__item">
+    <a href="http://developer.helpscout.net/seed/" class="c-menu__link">Seed</a>
   </li>
   <li class="c-menu__item">
     <a href="/contact" class="c-menu__link">Contact</a>
