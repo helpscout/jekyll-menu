@@ -1,4 +1,4 @@
-## jekyll-menu
+# jekyll-menu [![Build Status](https://travis-ci.org/helpscout/jekyll-menu.svg?branch=master)](https://travis-ci.org/helpscout/jekyll-menu) [![Gem Version](https://badge.fury.io/rb/jekyll-menu.svg)](https://badge.fury.io/rb/jekyll-menu)
 
 Easy menu creation with YAML data
 
