@@ -12,7 +12,7 @@ class TestTemplate < JekyllUnitTest
     should "post: active item class is added to current post" do
       post = @site.posts[0]
       menu = post["menu"]["test-post"]
-      item = menu["items"][1]
+      item = menu[1]
 
       assert_equal(true, item["active"])
     end

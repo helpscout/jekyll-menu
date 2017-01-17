@@ -3,15 +3,17 @@ title: Test Page
 permalink: test
 ---
 
-<ul class="c-menu">
-{% for item in page.menu.test-page %}
+{% assign menu = page.menu.test-page %}
+<ul class="{{ menu.class }}">
+{% for item in menu.items %}
   <li class="{{ item.class }}">
-    <a href="{{ item.link }}">{{ item.title }}</a>
-    {% if item.items %}
-      <ul class="{{ item.class }}">
-      {% for item in item.items %}
+    <a href="{{ item.link }}" class="{{ item.link_class }}">{{ item.title }}</a>
+    {% if item.menu %}
+      {% assign menu = item.menu %}
+      <ul class="{{ menu.class }}">
+      {% for item in menu.items %}
         <li class="{{ item.class }}">
-          <a href="{{ item.link }}">{{ item.title }}</a>
+          <a href="{{ item.link }}" class="{{ item.link_class }}">{{ item.title }}</a>
         </li>
       {% endfor %}
       </ul>

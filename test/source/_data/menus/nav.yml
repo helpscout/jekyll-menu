@@ -2,15 +2,15 @@
   link: '/'
 
 - title: Brand
-  pages:
+  items:
     - title: Color
       link: '/omgcolors'
     - title: Illustration
     - title: Typography
-      pages:
+      items:
         - title: Headings
         - title: Copy
 
 - title: Icons
-  pages:
+  items:
     - title: Scouticons

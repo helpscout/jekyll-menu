@@ -12,7 +12,7 @@ class TestTemplate < JekyllUnitTest
     should "page: active item class is added to current page" do
       page = @site.pages[1]
       menu = page["menu"]["test-page"]
-      item = menu[1]
+      item = menu["items"][1]
 
       assert_equal(true, item["active"])
     end

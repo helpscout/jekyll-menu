@@ -12,7 +12,7 @@ class TestTemplate < JekyllUnitTest
     should "class: an item has the correct menu class" do
       page = @site.pages[0]
       menu = page["menu"]["test-page"]
-      item = menu[0]
+      item = menu["items"][0]
 
       class_name = "c-menu__item"
 
@@ -22,7 +22,7 @@ class TestTemplate < JekyllUnitTest
     should "class: an active item has the correct menu class" do
       page = @site.pages[1]
       menu = page["menu"]["test-page"]
-      item = menu[1]
+      item = menu["items"][1]
 
       class_name = "c-menu__item is-active"
 
@@ -32,7 +32,7 @@ class TestTemplate < JekyllUnitTest
     should "link: root / permalinks are untouched" do
       page = @site.pages[0]
       menu = page["menu"]["test-page"]
-      item = menu[0]
+      item = menu["items"][0]
 
       url = "/"
 
@@ -42,49 +42,31 @@ class TestTemplate < JekyllUnitTest
     should "link: custom http URLs are untouched" do
       page = @site.pages[0]
       menu = page["menu"]["test-page"]
-      item = menu[2]
+      item = menu["items"][2]
 
       url = "https://www.helpscout.net/"
 
       assert_equal(url, item["link"])
     end
 
-    should "sub-menu: creates sub-menu items when YAML item has pages attribute" do
-      page = @site.pages[0]
+    should "link: link class is correct" do
+      page = @site.pages[1]
       menu = page["menu"]["test-page"]
-      item = menu[3]
+      item = menu["items"][0]
 
-      assert(item["items"], true)
+      class_name = "c-menu__link"
+
+      assert_equal(class_name, item["link_class"])
     end
 
-    should "sub-menu: has # a link url" do
-      page = @site.pages[0]
+    should "link: active link class is correct" do
+      page = @site.pages[1]
       menu = page["menu"]["test-page"]
-      item = menu[3]
+      item = menu["items"][1]
 
-      url = "#"
+      class_name = "c-menu__link is-active"
 
-      assert_equal(url, item["link"])
-    end
-
-    should "sub-menu: a sub-menu has the correct class name" do
-      page = @site.pages[0]
-      menu = page["menu"]["test-page"]
-      item = menu[4]
-
-      class_name = "c-menu c-menu--sub-menu"
-
-      assert_equal(class_name, item["class"])
-    end
-
-    should "sub-menu: an active sub-menu has the correct class name" do
-      page = @site.pages[0]
-      menu = page["menu"]["test-page"]
-      item = menu[3]
-
-      class_name = "c-menu c-menu--sub-menu is-active"
-
-      assert_equal(class_name, item["class"])
+      assert_equal(class_name, item["link_class"])
     end
 
   end

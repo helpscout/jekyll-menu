@@ -11,6 +11,8 @@ module Jekyll
       "menu_active_class" => "is-active",
       "item_class" => "c-menu__item",
       "item_active_class" => "is-active",
+      "item_sub_class" => "has-sub-menu",
+      "link_class" => "c-menu__link",
     }
 
     def self.initialize(data)
@@ -26,7 +28,8 @@ module Jekyll
       menus = @site.data["menus"].map { |m|
         title = m[0]
         items = m[1]
-        m[1] = self.setup_menu(items, title)["items"]
+        sub = false
+        m[1] = self.setup_menu(items, title, sub)
         m
       }
       @data.data["menu"] = Hash[*menus.flatten(1)]
@@ -48,14 +51,15 @@ module Jekyll
     def self.setup_menu_items(items, path)
       path = path ? path : @options["url_path"]
       items.map { |i|
-        if i.key?("pages")
-          item = self.setup_menu(i["pages"], i["title"], true)
-        else
-          item = {}
-          item["title"] = i["title"]
-          item["link"] = self.item_link(i, path)
-          item["class"] = self.item_class(item["link"])
-          item["active"] = self.item_is_active(item["link"])
+        item = {}
+        item["title"] = i["title"]
+        item["link"] = self.item_link(i, path)
+        item["class"] = self.item_class(item["link"], i.key?("items"))
+        item["link_class"] = self.link_class(item["link"])
+        item["active"] = self.item_is_active(item["link"])
+        if i.key?("items")
+          item["menu"] = self.setup_menu(i["items"], i["title"], true)
+          item["link"] = "#"
         end
         item
       }
@@ -80,9 +84,9 @@ module Jekyll
       class_name = @options["menu_class"]
       if sub
         class_name = "#{class_name} #{@options['menu_sub_class']}"
-      end
-      if self.menu_has_active_item(items)
-        class_name = "#{class_name} #{@options['menu_active_class']}"
+        if self.menu_has_active_item(items)
+          class_name = "#{class_name} #{@options['menu_active_class']}"
+        end
       end
       class_name
     end
@@ -127,8 +131,19 @@ module Jekyll
       url === path
     end
 
-    def self.item_class(path)
+    def self.item_class(path, has_items = false)
       class_name = @options["item_class"]
+      if self.item_is_active(path)
+        class_name = "#{class_name} #{@options['item_active_class']}"
+      end
+      if has_items
+        class_name = "#{class_name} #{@options['item_sub_class']}"
+      end
+      class_name
+    end
+
+    def self.link_class(path)
+      class_name = @options["link_class"]
       if self.item_is_active(path)
         class_name = "#{class_name} #{@options['item_active_class']}"
       end
